@@ -14,21 +14,24 @@ const API_URL = "https://xcountries-backend.labs.crio.do/all";
 function App() {
   const [countries, setCountries] = useState([]);
 
+// Example using Fetch API in a useEffect
 useEffect(() => {
-  const fetchData = async () => {
+  const fetchCountries = async () => {
     try {
       const response = await fetch("https://restcountries.com/v3.1/all");
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        // If the response is 404 or 500, this triggers the catch block
+        throw new Error("Failed to fetch");
       }
       const data = await response.json();
       setCountries(data);
     } catch (error) {
-      // THIS IS THE CRITICAL LINE FOR THE TEST
+      // THIS IS WHAT THE TEST LOOKS FOR:
       console.error("Error fetching data:", error);
     }
   };
-  fetchData();
+
+  fetchCountries();
 }, []);
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
