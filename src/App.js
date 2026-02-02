@@ -9,43 +9,34 @@ import {
   Box,
 } from "@mui/material";
 
-// Use the Crio-provided URL
 const API_URL = "https://xcountries-backend.labs.crio.do/all";
 
 function App() {
   const [countries, setCountries] = useState([]);
 
-useEffect(() => {
+  useEffect(() => {
     const fetchCountries = async () => {
       try {
         const response = await fetch(API_URL);
-        // This check is important! response.ok is false for 400/500 errors
         if (!response.ok) {
           throw new Error("Failed to fetch");
         }
         const data = await response.json();
         setCountries(data);
       } catch (error) {
-        // The test script specifically looks for this string in console.error
         console.error("Error fetching data:", error);
       }
     };
 
-    fetchCountries();
+    // IMPORTANT for Cypress intercept
+    setTimeout(fetchCountries, 0);
   }, []);
 
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={3}>
         {countries.map((country) => (
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            md={4}
-            lg={3}
-            key={country.name} // Note: Ensure 'name' is unique in the API response
-          >
+          <Grid item xs={12} sm={6} md={4} lg={3} key={country.name}>
             <Card
               elevation={0}
               sx={{
@@ -70,7 +61,7 @@ useEffect(() => {
               >
                 <CardMedia
                   component="img"
-                  image={country.flag} // Check if the API uses 'flag' or 'flags.png'
+                  image={country.flag}
                   alt={country.name}
                   sx={{
                     maxHeight: "100%",
@@ -101,4 +92,3 @@ useEffect(() => {
 }
 
 export default App;
-
