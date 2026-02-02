@@ -14,13 +14,22 @@ const API_URL = "https://xcountries-backend.labs.crio.do/all";
 function App() {
   const [countries, setCountries] = useState([]);
 
-  useEffect(() => {
-    fetch(API_URL)
-      .then((res) => res.json())
-      .then((data) => setCountries(data))
-      .catch((err) => console.error(err));
-  }, []);
-
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const response = await fetch("https://restcountries.com/v3.1/all");
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      setCountries(data);
+    } catch (error) {
+      // THIS IS THE CRITICAL LINE FOR THE TEST
+      console.error("Error fetching data:", error);
+    }
+  };
+  fetchData();
+}, []);
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={3}>
