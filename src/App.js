@@ -1,13 +1,4 @@
 import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Grid,
-  Card,
-  CardContent,
-  CardMedia,
-  Typography,
-  Box,
-} from "@mui/material";
 
 const API_URL = "https://xcountries-backend.labs.crio.do/all";
 
@@ -15,79 +6,41 @@ function App() {
   const [countries, setCountries] = useState([]);
 
   useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const response = await fetch(API_URL);
-        if (!response.ok) {
-          throw new Error("Failed to fetch");
-        }
-        const data = await response.json();
-        setCountries(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    // IMPORTANT for Cypress intercept
-    setTimeout(fetchCountries, 0);
+    fetch(API_URL)
+      .then((res) => res.json())
+      .then((data) => setCountries(data))
+      .catch((err) => console.error(err));
   }, []);
 
   return (
-    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-      <Grid container spacing={3}>
-        {countries.map((country) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={country.name}>
-            <Card
-              elevation={0}
-              sx={{
-                height: "100%",
-                border: "1px solid #e0e0e0",
-                borderRadius: "8px",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 2,
-              }}
-            >
-              <Box
-                sx={{
-                  height: 100,
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <CardMedia
-                  component="img"
-                  image={country.flag}
-                  alt={country.name}
-                  sx={{
-                    maxHeight: "100%",
-                    maxWidth: "100%",
-                    objectFit: "contain",
-                  }}
-                />
-              </Box>
-
-              <CardContent sx={{ paddingBottom: "16px !important" }}>
-                <Typography
-                  variant="subtitle1"
-                  sx={{
-                    fontFamily: "serif",
-                    fontWeight: 600,
-                    textAlign: "center",
-                  }}
-                >
-                  {country.name}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-    </Container>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+        gap: "16px",
+        padding: "16px",
+      }}
+    >
+      {countries.map((country) => (
+        <div
+          key={country.name}
+          data-testid="country-card"
+          style={{
+            border: "1px solid #ddd",
+            borderRadius: "8px",
+            padding: "16px",
+            textAlign: "center",
+          }}
+        >
+          <img
+            src={country.flag}
+            alt="flag"
+            style={{ width: "100px", height: "60px", objectFit: "contain" }}
+          />
+          <h3>{country.name}</h3>
+        </div>
+      ))}
+    </div>
   );
 }
 
