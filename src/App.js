@@ -19,7 +19,7 @@ function App() {
         setLoading(false);
       })
       .catch((error) => {
-        console.error(error); // IMPORTANT: only error object
+        console.error("Error fetching data:", error); // matches Cypress test
         setLoading(false);
       });
   }, []);
@@ -65,4 +65,5 @@ function App() {
 }
 
 export default App;
+
 
