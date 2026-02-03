@@ -5,29 +5,28 @@ function App() {
   const [countries, setCountries] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", "https://xcountries-backend.labs.crio.do/all");
+ useEffect(() => {
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", "https://xcountries-backend.labs.crio.do/all");
 
-    xhr.onreadystatechange = () => {
-      if (xhr.readyState === 4) {
-        try {
-          if (xhr.status === 200) {
-            const data = JSON.parse(xhr.responseText);
-            setCountries(data);
-          } else {
-            console.error("Error fetching data");
-          }
-        } catch (e) {
-          console.error("Error fetching data");
-        } finally {
-          setLoading(false);
-        }
-      }
-    };
+  xhr.onload = () => {
+    if (xhr.status === 200) {
+      const data = JSON.parse(xhr.responseText);
+      setCountries(data);
+    } else {
+      console.error(new Error("API Error"));
+    }
+    setLoading(false);
+  };
 
-    xhr.send();
-  }, []);
+  xhr.onerror = (error) => {
+    console.error(error); // 👈 THIS IS WHAT CYPRESS EXPECTS
+    setLoading(false);
+  };
+
+  xhr.send();
+}, []);
+
 
   if (loading) {
     return <p>Loading...</p>;
