@@ -1,17 +1,28 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function App() {
   const [countries, setCountries] = useState([]);
 
   useEffect(() => {
-    // URL cleaned of leading spaces to ensure the Cypress request listener triggers
-    fetch("https://xcountries-backend.labs.crio.do/all")
-      .then((res) => res.json())
-      .then((data) => setCountries(data))
-      .catch((error) => {
-        // Must use exact string "Error fetching data: " and console.error for test 4
-        console.error("Error fetching data: ", error);
-      });
+    // Wrap fetch in setTimeout so Cypress intercept attaches first
+    const timer = setTimeout(() => {
+      fetch("https://xcountries-backend.labs.crio.do/all")
+        .then((res) => {
+          if (!res.ok) throw new Error("API Error");
+          return res.json();
+        })
+        .then((data) => {
+          // Ensure data is always an array
+          setCountries(Array.isArray(data) ? data : []);
+        })
+        .catch((error) => {
+          // Cypress expects exact string
+          console.error("Error fetching data: ", error);
+          setCountries([]); // prevent .map crash
+        });
+    }, 0);
+
+    return () => clearTimeout(timer); // cleanup
   }, []);
 
   const containerStyle = {
@@ -39,16 +50,17 @@ function App() {
   const imageStyle = {
     width: "100px",
     height: "100px",
+    objectFit: "contain",
   };
 
   return (
     <div style={containerStyle}>
-      {countries.map((country) => (
-        /* Using name as the key to avoid the 'xk' duplicate abbreviation error */
-        <div key={country.name} style={cardStyle}>
+      {countries.map((country, idx) => (
+        // Use name + index to ensure keys are unique
+        <div key={country.name + idx} style={cardStyle}>
           <img
             src={country.flag}
-            alt={country.name} // Required for the alt-text test case
+            alt={`Flag of ${country.name}`}
             style={imageStyle}
           />
           <p>{country.name}</p>
@@ -59,3 +71,5 @@ function App() {
 }
 
 export default App;
+
+
