@@ -1,12 +1,5 @@
-import React, { useEffect, useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardMedia,
-  Typography,
-  Grid,
-  CircularProgress,
-} from "@mui/material";
+import { useEffect, useState } from "react";
+import CountryCard from "./CountryCard";
 
 function App() {
   const [countries, setCountries] = useState([]);
@@ -14,61 +7,42 @@ function App() {
 
   useEffect(() => {
     fetch("https://xcountries-backend.labs.crio.do/all")
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setCountries(data);
-        setLoading(false);
-      })
+      .then((res) => res.json())
+      .then((data) => setCountries(data))
       .catch((error) => {
-        console.error("Error fetching countries:", error);
-        setLoading(false);
-      });
+        console.error("Error fetching data: ", error);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   if (loading) {
-    return (
-      <div style={{ textAlign: "center", marginTop: "50px" }}>
-        <CircularProgress />
-        <Typography variant="h6" style={{ marginTop: "10px" }}>
-          Loading...
-        </Typography>
-      </div>
-    );
+    return <p>Loading...</p>;
   }
 
   return (
-    <Grid container spacing={3} padding={3}>
+    <div
+      style={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: "10px",
+        justifyContent: "center",
+        padding: "20px",
+      }}
+    >
       {countries.map((country, index) => (
-        <Grid item xs={6} sm={4} md={3} lg={2} key={index}>
-          <Card data-testid="country-card" sx={{ textAlign: "center" }}>
-            <CardMedia
-              component="img"
-              image={country.flag}
-              alt={`${country.name} flag`}
-              sx={{
-                width: "80px",
-                height: "50px",
-                margin: "10px auto",
-              }}
-            />
-            <CardContent>
-              <Typography variant="body1" fontWeight={500}>
-                {country.name}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+        <CountryCard
+          key={index}          // 👈 prevents duplicate key failures
+          name={country.name}
+          flag={country.flag}
+        />
       ))}
-    </Grid>
+    </div>
   );
 }
 
 export default App;
+
+
 
 
 
