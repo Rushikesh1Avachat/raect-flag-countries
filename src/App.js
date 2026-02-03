@@ -14,13 +14,13 @@ function App() {
         const data = JSON.parse(xhr.responseText);
         setCountries(data);
       } else {
-        console.error("Error fetching data");
+        console.error("Error fetching data:", new Error(`Status ${xhr.status}`));
       }
       setLoading(false);
     };
 
-    xhr.onerror = () => {
-      console.error("Error fetching data"); // ✅ must be string
+    xhr.onerror = (error) => {
+      console.error("Error fetching data:", error);
       setLoading(false);
     };
 
@@ -47,6 +47,8 @@ function App() {
 }
 
 export default App;
+
+
 
 
 

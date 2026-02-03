@@ -1,14 +1,9 @@
-import React from "react";
-
-const CountryCard = ({ name, flag }) => {
+function CountryCard({ name, flag }) {
   return (
     <div
+      data-testid="country-card"
       style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        border: "1px solid #ccc",
+        border: "1px solid #ddd",
         borderRadius: "8px",
         padding: "10px",
         width: "150px",
@@ -17,12 +12,12 @@ const CountryCard = ({ name, flag }) => {
     >
       <img
         src={flag}
-        alt={name}
-        style={{ width: "100px", height: "100px" }}
+        alt={`${name} flag`}
+        style={{ width: "100%", borderRadius: "4px" }}
       />
-      <h2>{name}</h2>
+      <p>{name}</p>
     </div>
   );
-};
+}
 
 export default CountryCard;
