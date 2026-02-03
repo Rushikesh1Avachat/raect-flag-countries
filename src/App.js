@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import CountryCard from "./CountryCard";
 
 function App() {
@@ -7,17 +6,27 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios
-      .get("https://xcountries-backend.labs.crio.do/all")
-      .then((response) => {
-        setCountries(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data: ", error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", "https://xcountries-backend.labs.crio.do/all");
+
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === 4) {
+        try {
+          if (xhr.status === 200) {
+            const data = JSON.parse(xhr.responseText);
+            setCountries(data);
+          } else {
+            console.error("Error fetching data");
+          }
+        } catch (e) {
+          console.error("Error fetching data");
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    xhr.send();
   }, []);
 
   if (loading) {
@@ -46,6 +55,8 @@ function App() {
 }
 
 export default App;
+
+
 
 
 
