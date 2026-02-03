@@ -4,15 +4,24 @@ const API_URL = "https://xcountries-backend.labs.crio.do/all";
 
 function App() {
   const [countries, setCountries] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch(API_URL)
       .then((res) => res.json())
-      .then((data) => setCountries(data))
-      .catch((err) =>
-        console.error("Error fetching data: ", err)
-      );
+      .then((data) => {
+        setCountries(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
   }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div
@@ -37,11 +46,7 @@ function App() {
           <img
             src={country.flag}
             alt={`Flag of ${country.name}`}
-            style={{
-              width: "100px",
-              height: "60px",
-              objectFit: "contain",
-            }}
+            style={{ width: "100px", height: "60px", objectFit: "contain" }}
           />
           <h3>{country.name}</h3>
         </div>
