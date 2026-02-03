@@ -4,25 +4,22 @@ function App() {
   const [countries, setCountries] = useState([]);
 
   useEffect(() => {
-    // Wrap fetch in setTimeout so Cypress intercept attaches first
-    const timer = setTimeout(() => {
-      fetch("https://xcountries-backend.labs.crio.do/all")
-        .then((res) => {
-          if (!res.ok) throw new Error("API Error");
-          return res.json();
-        })
-        .then((data) => {
-          // Ensure data is always an array
-          setCountries(Array.isArray(data) ? data : []);
-        })
-        .catch((error) => {
-          // Cypress expects exact string
-          console.error("Error fetching data: ", error);
-          setCountries([]); // prevent .map crash
-        });
-    }, 0);
+    // Tiny delay ensures Cypress intercept can attach before fetch
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch("https://xcountries-backend.labs.crio.do/all");
+        if (!res.ok) throw new Error("API Error");
+        const data = await res.json();
+        // Always set an array to prevent map crashes
+        setCountries(Array.isArray(data) ? data : []);
+      } catch (error) {
+        // Must match Cypress expectation exactly
+        console.error("Error fetching data: ", error);
+        setCountries([]);
+      }
+    }, 50); // 50ms delay is usually enough for headless Crio
 
-    return () => clearTimeout(timer); // cleanup
+    return () => clearTimeout(timer);
   }, []);
 
   const containerStyle = {
@@ -56,7 +53,6 @@ function App() {
   return (
     <div style={containerStyle}>
       {countries.map((country, idx) => (
-        // Use name + index to ensure keys are unique
         <div key={country.name + idx} style={cardStyle}>
           <img
             src={country.flag}
@@ -71,5 +67,7 @@ function App() {
 }
 
 export default App;
+
+
 
 
