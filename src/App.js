@@ -3,7 +3,7 @@ import { Grid, Card, CardContent, CardMedia, Typography, CircularProgress, Box }
 
 const API_URL = "https://xcountries-backend.labs.crio.do/all";
 
- function App() {
+function App() {
   const [countries, setCountries] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -15,9 +15,9 @@ const API_URL = "https://xcountries-backend.labs.crio.do/all";
         const data = await res.json();
         setCountries(data);
       } catch (error) {
-        console.error("Error fetching data:", error); // Cypress expects this
+        console.error("Error fetching data:", error);
       } finally {
-        setLoading(false); // ensures Loading... disappears
+        setLoading(false);
       }
     };
 
@@ -36,26 +36,28 @@ const API_URL = "https://xcountries-backend.labs.crio.do/all";
   return (
     <Box p={2}>
       <Grid container spacing={2}>
-        {countries.map((country, idx) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={country.name + idx}>
-            <Card data-testid="country-card">
-              <CardMedia
-                component="img"
-                height="140"
-                image={country.flag}
-                alt={`Flag of ${country.name}`}
-                sx={{ objectFit: "contain" }}
-              />
-              <CardContent>
-                <Typography variant="h6" align="center">
-                  {country.name}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
+    {countries.map((country, idx) => (
+  <Grid item xs={12} sm={6} md={4} lg={3} key={country.name + idx}>
+    <Card data-testid="country-card">
+      <CardMedia
+        component="img"
+        height="140"
+        image={country.flag}
+        alt={`Flag of ${country.name}`}
+        sx={{ objectFit: "contain" }}
+      />
+      <CardContent>
+        <Typography variant="h6" align="center">
+          {country.name}
+        </Typography>
+      </CardContent>
+    </Card>
+  </Grid>
+))}
+
       </Grid>
     </Box>
   );
 }
-export default App
+
+export default App;
