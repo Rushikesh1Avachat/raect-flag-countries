@@ -7,9 +7,16 @@ function App() {
 
   useEffect(() => {
     fetch(API_URL)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("API Error");
+        }
+        return res.json();
+      })
       .then((data) => setCountries(data))
-      .catch((err) => console.error(err));
+      .catch(() => {
+        console.error("Error fetching countries");
+      });
   }, []);
 
   return (
@@ -35,7 +42,11 @@ function App() {
           <img
             src={country.flag}
             alt="flag"
-            style={{ width: "100px", height: "60px", objectFit: "contain" }}
+            style={{
+              width: "100px",
+              height: "60px",
+              objectFit: "contain",
+            }}
           />
           <h3>{country.name}</h3>
         </div>
