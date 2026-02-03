@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import CountryCard from "./CountryCard";
 
 function App() {
@@ -6,13 +7,17 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("https://xcountries-backend.labs.crio.do/all")
-      .then((res) => res.json())
-      .then((data) => setCountries(data))
+    axios
+      .get("https://xcountries-backend.labs.crio.do/all")
+      .then((response) => {
+        setCountries(response.data);
+      })
       .catch((error) => {
         console.error("Error fetching data: ", error);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   if (loading) {
@@ -31,7 +36,7 @@ function App() {
     >
       {countries.map((country, index) => (
         <CountryCard
-          key={index}          // 👈 prevents duplicate key failures
+          key={index}
           name={country.name}
           flag={country.flag}
         />
