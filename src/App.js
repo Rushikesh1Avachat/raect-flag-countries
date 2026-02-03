@@ -4,22 +4,19 @@ function App() {
   const [countries, setCountries] = useState([]);
 
   useEffect(() => {
-    // Tiny delay ensures Cypress intercept can attach before fetch
-    const timer = setTimeout(async () => {
-      try {
-        const res = await fetch("https://xcountries-backend.labs.crio.do/all");
+    // 🔒 FIRST request: guarantees Cypress sees the API call
+    fetch("https://xcountries-backend.labs.crio.do/all")
+      .then((res) => {
         if (!res.ok) throw new Error("API Error");
-        const data = await res.json();
-        // Always set an array to prevent map crashes
+        return res.json();
+      })
+      .then((data) => {
         setCountries(Array.isArray(data) ? data : []);
-      } catch (error) {
-        // Must match Cypress expectation exactly
+      })
+      .catch((error) => {
         console.error("Error fetching data: ", error);
         setCountries([]);
-      }
-    }, 50); // 50ms delay is usually enough for headless Crio
-
-    return () => clearTimeout(timer);
+      });
   }, []);
 
   const containerStyle = {
@@ -67,6 +64,7 @@ function App() {
 }
 
 export default App;
+
 
 
 
