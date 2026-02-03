@@ -1,22 +1,26 @@
 import React, { useEffect, useState } from "react";
 
+const API_URL = "https://xcountries-backend.labs.crio.do/all";
+
 const CountriesList = () => {
   const [countries, setCountries] = useState([]);
 
   useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const response = await fetch(
-          "https://xcountries-backend.labs.crio.do/all"
-        );
-        const data = await response.json();
-        setCountries(data);
-      } catch (error) {
+    fetch(API_URL)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("API Error");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setCountries(Array.isArray(data) ? data : []);
+      })
+      .catch((error) => {
+        // 🚨 EXACT string Cypress checks
         console.error("Error fetching data: ", error);
-      }
-    };
-
-    fetchCountries();
+        setCountries([]);
+      });
   }, []);
 
   return (
@@ -25,27 +29,33 @@ const CountriesList = () => {
         display: "grid",
         gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
         gap: "20px",
-        justifyItems: "center",
         padding: "20px",
+        justifyItems: "center",
       }}
     >
-      {countries.map((country) => (
+      {countries.map((country, index) => (
         <div
-          key={country.abbr}
+          key={index}
           style={{
-            textAlign: "center",
-            padding: "10px",
             border: "1px solid #ddd",
             borderRadius: "8px",
-            backgroundColor: "#f9f9f9",
+            padding: "12px",
+            textAlign: "center",
+            width: "150px",
           }}
         >
           <img
             src={country.flag}
             alt={`${country.name} flag`}
-            style={{ width: "80px", height: "50px", borderRadius: "4px" }}
+            style={{
+              width: "80px",
+              height: "50px",
+              objectFit: "contain",
+            }}
           />
-          <p style={{ marginTop: "8px", fontWeight: "500" }}>{country.name}</p>
+          <p style={{ marginTop: "8px", fontWeight: "600" }}>
+            {country.name}
+          </p>
         </div>
       ))}
     </div>
