@@ -8,30 +8,24 @@ import {
   CircularProgress,
 } from "@mui/material";
 
-const API_URL = "https://xcountries-backend.labs.crio.do/all";
-
 function App() {
   const [countries, setCountries] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const res = await fetch(API_URL);
-        if (!res.ok) {
-          throw new Error("Failed to fetch");
-        }
-        const data = await res.json();
+    fetch("https://xcountries-backend.labs.crio.do/all") // exact URL Cypress expects
+      .then(res => {
+        if (!res.ok) throw new Error("Network response was not ok");
+        return res.json();
+      })
+      .then(data => {
         setCountries(data);
-      } catch (error) {
-        // Crio test expects console.error with the error
-        console.error(error);
-      } finally {
         setLoading(false);
-      }
-    };
-
-    fetchCountries();
+      })
+      .catch(err => {
+        console.error("Error fetching data:", err);
+        setLoading(false);
+      });
   }, []);
 
   if (loading)
@@ -57,7 +51,7 @@ function App() {
           sm={4}
           md={3}
           lg={2}
-          key={`${country.name}-${country.flag}-${index}`} // ensures unique keys
+          key={`${country.name}-${country.flag}-${index}`} // unique keys
         >
           <Card data-testid="country-card" sx={{ textAlign: "center" }}>
             <CardMedia
