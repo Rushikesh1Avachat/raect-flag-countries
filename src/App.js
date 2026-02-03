@@ -20,14 +20,12 @@ function App() {
   }, []);
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-        gap: "16px",
-        padding: "16px",
-      }}
-    >
+    <div style={{
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+      gap: "16px",
+      padding: "16px",
+    }}>
       {countries.map((country) => (
         <div
           key={country.name}
@@ -42,11 +40,7 @@ function App() {
           <img
             src={country.flag}
             alt="flag"
-            style={{
-              width: "100px",
-              height: "60px",
-              objectFit: "contain",
-            }}
+            style={{ width: "100px", height: "60px", objectFit: "contain" }}
           />
           <h3>{country.name}</h3>
         </div>
@@ -56,3 +50,4 @@ function App() {
 }
 
 export default App;
+
