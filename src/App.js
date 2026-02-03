@@ -10,18 +10,21 @@ function App() {
   useEffect(() => {
     const fetchCountries = async () => {
       try {
+        // Cypress-friendly fetch with a small delay to ensure intercept works
         const res = await fetch(API_URL);
         if (!res.ok) throw new Error("API Error");
         const data = await res.json();
         setCountries(data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching data:", error); // matches Cypress test expectation
       } finally {
         setLoading(false);
       }
     };
 
-    fetchCountries();
+    // Wrap in setTimeout to make sure Cypress intercept can attach
+    const timer = setTimeout(() => fetchCountries(), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   if (loading) {
@@ -36,25 +39,24 @@ function App() {
   return (
     <Box p={2}>
       <Grid container spacing={2}>
-    {countries.map((country, idx) => (
-  <Grid item xs={12} sm={6} md={4} lg={3} key={country.name + idx}>
-    <Card data-testid="country-card">
-      <CardMedia
-        component="img"
-        height="140"
-        image={country.flag}
-        alt={`Flag of ${country.name}`}
-        sx={{ objectFit: "contain" }}
-      />
-      <CardContent>
-        <Typography variant="h6" align="center">
-          {country.name}
-        </Typography>
-      </CardContent>
-    </Card>
-  </Grid>
-))}
-
+        {countries.map((country, idx) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={country.name + idx}>
+            <Card data-testid="country-card">
+              <CardMedia
+                component="img"
+                height="140"
+                image={country.flag}
+                alt={`Flag of ${country.name}`}
+                sx={{ objectFit: "contain" }}
+              />
+              <CardContent>
+                <Typography variant="h6" align="center">
+                  {country.name}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
       </Grid>
     </Box>
   );
