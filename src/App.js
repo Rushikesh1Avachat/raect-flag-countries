@@ -1,4 +1,12 @@
 import React, { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  Grid,
+  CircularProgress,
+} from "@mui/material";
 
 const API_URL = "https://xcountries-backend.labs.crio.do/all";
 
@@ -7,62 +15,71 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(API_URL)
-      .then((res) => {
+    const fetchCountries = async () => {
+      try {
+        const res = await fetch(API_URL);
         if (!res.ok) {
-          throw new Error("API Error");
+          throw new Error("Failed to fetch");
         }
-        return res.json();
-      })
-      .then((data) => {
-        setCountries(Array.isArray(data) ? data : []);
-      })
-      .catch((error) => {
-        console.error("Error fetching data: ", error);
-        setCountries([]);
-      })
-      .finally(() => {
+        const data = await res.json();
+        setCountries(data);
+      } catch (error) {
+        // Crio test expects console.error with the error
+        console.error(error);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchCountries();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>; // ✅ Cypress waits for this
-  }
+  if (loading)
+    return (
+      <div style={{ textAlign: "center", marginTop: "50px" }}>
+        <CircularProgress data-testid="loading-spinner" />
+        <Typography
+          variant="h6"
+          data-testid="loading-text"
+          style={{ marginTop: "10px" }}
+        >
+          Loading...
+        </Typography>
+      </div>
+    );
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
-        gap: "20px",
-        padding: "20px",
-      }}
-    >
+    <Grid container spacing={3} padding={3}>
       {countries.map((country, index) => (
-        <div
-          key={`${country.name}-${index}`}
-          data-testid="country-card"
-          style={{
-            textAlign: "center",
-            border: "1px solid #ddd",
-            borderRadius: "8px",
-            padding: "10px",
-          }}
+        <Grid
+          item
+          xs={6}
+          sm={4}
+          md={3}
+          lg={2}
+          key={`${country.name}-${country.flag}-${index}`} // ensures unique keys
         >
-          <img
-            src={country.flag}
-            alt={`Flag of ${country.name}`}
-            style={{ width: "80px", height: "50px" }}
-          />
-          <p>{country.name}</p>
-        </div>
+          <Card data-testid="country-card" sx={{ textAlign: "center" }}>
+            <CardMedia
+              component="img"
+              image={country.flag}
+              alt={`${country.name} flag`}
+              sx={{ width: "80px", height: "50px", margin: "10px auto" }}
+            />
+            <CardContent>
+              <Typography variant="body1" fontWeight={500}>
+                {country.name}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
       ))}
-    </div>
+    </Grid>
   );
 }
 
 export default App;
+
 
 
 
