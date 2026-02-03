@@ -1,23 +1,38 @@
+import { Card, CardContent, CardMedia, Typography } from "@mui/material";
+
 function CountryCard({ name, flag }) {
   return (
-    <div
+    <Card
       data-testid="country-card"
-      style={{
-        border: "1px solid #ddd",
-        borderRadius: "8px",
-        padding: "10px",
-        width: "150px",
+      sx={{
+        width: 150,
         textAlign: "center",
+        borderRadius: 2,
+        boxShadow: 3,
+        m: "auto",
+        display: "flex",
+        flexDirection: "column",
       }}
     >
-      <img
-        src={flag}
+      <CardMedia
+        component="img"
+        image={flag}
         alt={`${name} flag`}
-        style={{ width: "100%", borderRadius: "4px" }}
+        sx={{
+          height: 100,        // uniform flag height
+          objectFit: "cover", // ensures flags fill the space without distortion
+          borderTopLeftRadius: 8,
+          borderTopRightRadius: 8,
+        }}
       />
-      <p>{name}</p>
-    </div>
+      <CardContent sx={{ p: 1 }}>
+        <Typography variant="body2" noWrap>
+          {name}
+        </Typography>
+      </CardContent>
+    </Card>
   );
 }
 
 export default CountryCard;
+
