@@ -7,25 +7,22 @@ function App() {
 
   useEffect(() => {
     fetch(API_URL)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("API Error");
-        }
-        return res.json();
-      })
+      .then((res) => res.json())
       .then((data) => setCountries(data))
-      .catch(() => {
-        console.error("Error fetching countries");
-      });
+      .catch((err) =>
+        console.error("Error fetching data: ", err)
+      );
   }, []);
 
   return (
-    <div style={{
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-      gap: "16px",
-      padding: "16px",
-    }}>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+        gap: "16px",
+        padding: "16px",
+      }}
+    >
       {countries.map((country) => (
         <div
           key={country.name}
@@ -39,8 +36,12 @@ function App() {
         >
           <img
             src={country.flag}
-            alt="flag"
-            style={{ width: "100px", height: "60px", objectFit: "contain" }}
+            alt={`Flag of ${country.name}`}
+            style={{
+              width: "100px",
+              height: "60px",
+              objectFit: "contain",
+            }}
           />
           <h3>{country.name}</h3>
         </div>
